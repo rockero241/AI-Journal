@@ -1,10 +1,13 @@
-
 import json
 import datetime
+import os
 
 class DataBase:
     def __init__ (self, path = "notes.json"):
         self.path = path
+        if  not os.path.exists(self.path):
+            with open(self.path, 'w') as file:
+                file.write("{}")
 
     def add_note (self, note):
         now = datetime.datetime.now()
@@ -19,7 +22,8 @@ class DataBase:
         with open(self.path, "w") as file:
 
             json.dump(data, file)
-        
 
-"""data = DataBase()
-data.add_note("hello there")"""
+    def get_notes (self):
+        with open(self.path, "r") as file:
+            data = json.load(file)
+        return data

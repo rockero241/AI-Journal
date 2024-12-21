@@ -4,6 +4,8 @@ from openai import OpenAI
 import tkinter as tk
 from tkinter import ttk, messagebox
 
+from database import DataBase
+
 # Load the API key from environment variables
 api_key = os.environ.get("OPENAI_API_KEY")
 if not api_key:
@@ -67,13 +69,17 @@ def save_entry_to_file(entry, feedback):
     """
     Save the journal entry and AI feedback to a file.
     """
-    filename = f"journal_{date.today().strftime('%Y-%m-%d')}.txt"
+    """filename = f"journal_{date.today().strftime('%Y-%m-%d')}.txt"
     with open(filename, "w") as file:
         file.write(entry.format_entry())
         if feedback:
             file.write("\nAI Feedback:\n")
             file.write(feedback)
-    return filename
+    return filename"""
+
+    data = DataBase()
+    data.add_note(str(entry))
+    return None
 
 
 class JournalApp:
