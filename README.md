@@ -1,2 +1,10 @@
-# AI-Journal
-AI journal that will implement an SQL database to store user input and give AI feedback through an API.
+# AI Journal
+
+Welcome to **AI Journal**, an innovative and reflective journaling application. This project allows users to journal their thoughts and feelings daily while receiving insightful feedback from an AI assistant. Whether you want to track your emotional well-being, improve self-awareness, or simply develop a consistent journaling habit, AI Journal is here to support you.
+
+## Features
+
+- **Daily Journaling**: Write about your thoughts, emotions, and experiences every day.
+- **AI Feedback**: Receive constructive feedback and insights based on your entries, such as identifying patterns, offering encouragement, or suggesting coping mechanisms.
+- **Emotion Analysis**: Gain an understanding of your emotional trends over time.
+- **Privacy First**: Your entries are securely stored and accessible only to you.
