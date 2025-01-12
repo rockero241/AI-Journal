@@ -8,3 +8,8 @@ Welcome to **AI Journal**, an innovative and reflective journaling application. 
 - **AI Feedback**: Receive constructive feedback and insights based on your entries, such as identifying patterns, offering encouragement, or suggesting coping mechanisms.
 - **Emotion Analysis**: Gain an understanding of your emotional trends over time.
 - **Privacy First**: Your entries are securely stored and accessible only to you.
+
+## Coming soon:
+
+- **Database to save entries** Look back at old memories.
+- **AI progression feedback** AI will automatically look at your past week / month / year and tell you how far you've come from who you were back then.
