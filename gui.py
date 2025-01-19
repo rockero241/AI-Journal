@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from datetime import date
 from models import Journal
 from core import hash_password, verify_password, get_ai_feedback, save_entry_to_file
 
@@ -105,16 +106,120 @@ class JournalApp:
         self.create_main_menu()
 
     def create_main_menu(self):
+        """
+        Display the main menu with options to create an entry or view the entry log.
+        """
         for widget in self.root.winfo_children():
             widget.destroy()
+
         ttk.Label(self.root, text=f"Welcome, {self.username}!", font=("Helvetica", 16)).pack(pady=20)
         ttk.Button(self.root, text="Create Entry", command=self.create_entry).pack(pady=10)
         ttk.Button(self.root, text="View Entry Log", command=self.view_entry_log).pack(pady=10)
 
     def create_entry(self):
-        # Implement UI for creating an entry
-        pass
+        """
+        Display the form to create a new journal entry.
+        """
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        ttk.Label(self.root, text="Create Journal Entry", font=("Helvetica", 16)).pack(pady=10)
+
+        # Input fields
+        self.mood_var = tk.StringVar()
+        self.gratitude_var = tk.StringVar()
+        self.room_for_growth_var = tk.StringVar()
+        self.thoughts_var = tk.StringVar()
+        self.feedback_var = tk.StringVar(value="no")
+
+        ttk.Label(self.root, text="Mood (e.g., great, good, meh, bad):").pack(anchor="w", padx=10)
+        ttk.Entry(self.root, textvariable=self.mood_var, width=40).pack(padx=10, pady=5)
+
+        ttk.Label(self.root, text="What are you grateful for today?").pack(anchor="w", padx=10)
+        ttk.Entry(self.root, textvariable=self.gratitude_var, width=40).pack(padx=10, pady=5)
+
+        ttk.Label(self.root, text="What could have gone better today?").pack(anchor="w", padx=10)
+        ttk.Entry(self.root, textvariable=self.room_for_growth_var, width=40).pack(padx=10, pady=5)
+
+        ttk.Label(self.root, text="What's on your mind?").pack(anchor="w", padx=10)
+        ttk.Entry(self.root, textvariable=self.thoughts_var, width=40).pack(padx=10, pady=5)
+
+        ttk.Label(self.root, text="Do you want AI feedback?").pack(anchor="w", padx=10)
+        feedback_frame = ttk.Frame(self.root)
+        feedback_frame.pack(anchor="w", padx=10)
+        ttk.Radiobutton(feedback_frame, text="Yes", variable=self.feedback_var, value="yes").pack(side=tk.LEFT, padx=5)
+        ttk.Radiobutton(feedback_frame, text="No", variable=self.feedback_var, value="no").pack(side=tk.LEFT, padx=5)
+
+        ttk.Button(self.root, text="Submit Entry", command=self.submit_entry).pack(pady=20)
+        ttk.Button(self.root, text="Back to Main Menu", command=self.create_main_menu).pack(pady=10)
+
+    def submit_entry(self):
+        """
+        Save the journal entry to the database and provide feedback if requested.
+        """
+        from models import Journal
+        from core import get_ai_feedback, save_entry_to_file
+
+        mood = self.mood_var.get().strip()
+        gratitude = self.gratitude_var.get().strip()
+        room_for_growth = self.room_for_growth_var.get().strip()
+        thoughts = self.thoughts_var.get().strip()
+
+        if not all([mood, gratitude, room_for_growth, thoughts]):
+            messagebox.showerror("Error", "Please fill out all fields.")
+            return
+
+        entry = Journal(
+            date=date.today().strftime("%Y-%m-%d"),
+            mood=mood,
+            gratitude=gratitude,
+            room_for_growth=room_for_growth,
+            thoughts=thoughts,
+            username=self.username,
+        )
+
+        feedback = None
+        if self.feedback_var.get() == "yes":
+            feedback = get_ai_feedback(entry)
+
+        entry.save_to_db(feedback)
+        save_entry_to_file(entry, feedback)
+
+        messagebox.showinfo("Success", "Your journal entry has been saved!")
+        self.create_main_menu()
 
     def view_entry_log(self):
-        # Implement UI for viewing entry logs
-        pass
+        """
+        Display all journal entries for the logged-in user.
+        """
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+        ttk.Label(self.root, text="Your Journal Entries", font=("Helvetica", 16)).pack(pady=10)
+
+        # Text box to display entries
+        self.entries_output = tk.Text(self.root, height=20, width=50, wrap=tk.WORD)
+        self.entries_output.pack(padx=10, pady=10)
+
+        # Fetch entries from the database
+        import sqlite3
+
+        conn = sqlite3.connect('journal.db')
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT entry_date, mood, gratitude, room_for_growth, thoughts FROM entries WHERE username = ? ORDER BY entry_date DESC",
+            (self.username,)
+        )
+        rows = cursor.fetchall()
+        conn.close()
+
+        if rows:
+            for row in rows:
+                self.entries_output.insert(
+                    tk.END,
+                    f"Date: {row[0]}\nMood: {row[1]}\nGratitude: {row[2]}\nRoom for Growth: {row[3]}\nThoughts: {row[4]}\n{'-' * 40}\n",
+                )
+        else:
+            self.entries_output.insert(tk.END, "No entries found.")
+
+        ttk.Button(self.root, text="Back to Main Menu", command=self.create_main_menu).pack(pady=10)
