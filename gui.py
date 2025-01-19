@@ -3,7 +3,6 @@ from tkinter import ttk, messagebox
 from models import Journal
 from core import hash_password, verify_password, get_ai_feedback, save_entry_to_file
 
-
 class LoginWindow:
     def __init__(self, root):
         self.root = root
@@ -29,7 +28,7 @@ class LoginWindow:
         if self.verify_credentials(username, password):
             self.root.withdraw()
             journal_window = tk.Toplevel()
-            app = JournalApp(journal_window, username)
+            JournalApp(journal_window, username)
         else:
             messagebox.showerror("Error", "Invalid credentials")
 
@@ -49,7 +48,6 @@ class LoginWindow:
 
     def show_register(self):
         RegisterWindow(self.root)
-
 
 class RegisterWindow:
     def __init__(self, parent):
@@ -98,7 +96,6 @@ class RegisterWindow:
         except sqlite3.IntegrityError:
             messagebox.showerror("Error", "Username already exists")
 
-
 class JournalApp:
     def __init__(self, root, username):
         self.root = root
@@ -108,14 +105,16 @@ class JournalApp:
         self.create_main_menu()
 
     def create_main_menu(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
         ttk.Label(self.root, text=f"Welcome, {self.username}!", font=("Helvetica", 16)).pack(pady=20)
         ttk.Button(self.root, text="Create Entry", command=self.create_entry).pack(pady=10)
         ttk.Button(self.root, text="View Entry Log", command=self.view_entry_log).pack(pady=10)
 
     def create_entry(self):
-        # Implement entry creation logic
+        # Implement UI for creating an entry
         pass
 
     def view_entry_log(self):
-        # Implement log viewing logic
+        # Implement UI for viewing entry logs
         pass
