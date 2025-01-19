@@ -302,8 +302,8 @@ class JournalApp:
 
     def create_widgets(self):
         """
-        Create and layout widgets using ttk.
-        """
+           Create and layout widgets using ttk.
+           """
         # Title
         ttk.Label(self.root, text="Journaling App", font=("Helvetica", 16)).pack(pady=10)
 
@@ -331,12 +331,20 @@ class JournalApp:
         ttk.Radiobutton(feedback_frame, text="No", variable=self.feedback_var, value="no").pack(side=tk.LEFT, padx=5)
 
         # Submit button
-        ttk.Button(self.root, text="Submit", command=self.submit_entry).pack(pady=20)
+        ttk.Button(self.root, text="Submit Entry", command=self.submit_entry).pack(pady=10)
+
+        # Divider
+        ttk.Separator(self.root, orient="horizontal").pack(fill="x", pady=10)
+
+        # View Entries by Date
+        ttk.Label(self.root, text="View Entries by Date (YYYY-MM-DD):").pack(anchor="w", padx=10)
+        self.date_var = tk.StringVar()  # For user input
+        ttk.Entry(self.root, textvariable=self.date_var, width=20).pack(padx=10, pady=5)
+        ttk.Button(self.root, text="View", command=self.view_entries_by_date).pack(pady=5)
+        self.entries_output = tk.Text(self.root, height=10, width=50)  # To display entries
+        self.entries_output.pack(padx=10, pady=5)
 
     def submit_entry(self):
-        """
-        Process the journal entry, get feedback, and save it.
-        """
         # Get inputs from the user
         mood = self.mood_var.get().strip()
         gratitude = self.gratitude_var.get().strip()
@@ -348,18 +356,16 @@ class JournalApp:
             messagebox.showerror("Error", "Please fill out all fields.")
             return
 
-        # Create the journal entry with user_id
-        entry = Journal(self.username, self.date, mood, gratitude, room_for_growth, thoughts)
+        # Create the journal entry
+        entry = Journal(self.date, mood, gratitude, room_for_growth, thoughts, self.username)
 
-        # Get AI feedback if the user wants it
+        # Get AI feedback if selected
         feedback = None
         if self.feedback_var.get() == "yes":
             feedback = get_ai_feedback(entry)
-            messagebox.showinfo("AI Feedback", feedback)
-        
+
         # Save to database
         entry.save_to_db(feedback)
-
 
         # Save the entry to a file
         filename = save_entry_to_file(entry, feedback)
@@ -367,6 +373,37 @@ class JournalApp:
 
         # Clear input fields
         self.clear_fields()
+
+
+    def view_entries_by_date(self):
+        """
+        Display journal entries for a specific date.
+        """
+        selected_date = self.date_var.get().strip()
+        if not selected_date:
+            messagebox.showerror("Error", "Please enter a valid date.")
+            return
+
+        try:
+            conn = sqlite3.connect('journal.db')
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT entry_date, mood, gratitude, room_for_growth, thoughts FROM entries WHERE entry_date = ? AND username = ?",
+                (selected_date, self.username))
+            rows = cursor.fetchall()
+            conn.close()
+
+            # Display entries in the text box
+            self.entries_output.delete(1.0, tk.END)
+            if rows:
+                for row in rows:
+                    self.entries_output.insert(tk.END,
+                                               f"Date: {row[0]}\nMood: {row[1]}\nGratitude: {row[2]}\nRoom for Growth: {row[3]}\nThoughts: {row[4]}\n{'-' * 40}\n")
+            else:
+                self.entries_output.insert(tk.END, "No entries found for this date.")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {e}")
+
 
     def clear_fields(self):
         """
