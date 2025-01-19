@@ -13,3 +13,8 @@ Welcome to **AI Journal**, an innovative and reflective journaling application. 
 
 - **Database to save entries** Look back at old memories.
 - **AI progression feedback** AI will automatically look at your past week / month / year and tell you how far you've come from who you were back then.
+
+
+## TODO 
+
+- Implement SQL lite to store entries
