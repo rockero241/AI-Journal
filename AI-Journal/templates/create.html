@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Entry{% endblock %}
+
+{% block content %}
+<h2>Create a New Journal Entry</h2>
+<form method="POST" action="/create">
+    <div class="mb-3">
+        <label for="mood" class="form-label">Mood</label>
+        <input type="text" class="form-control" id="mood" name="mood" placeholder="e.g., Happy, Sad" required>
+    </div>
+    <div class="mb-3">
+        <label for="gratitude" class="form-label">Gratitude</label>
+        <textarea class="form-control" id="gratitude" name="gratitude" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="growth" class="form-label">Room for Growth</label>
+        <textarea class="form-control" id="growth" name="growth" rows="3" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="thoughts" class="form-label">Thoughts</label>
+        <textarea class="form-control" id="thoughts" name="thoughts" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-success">Save Entry</button>
+</form>
+{% endblock %}

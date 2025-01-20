@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}View Entries{% endblock %}
+
+{% block content %}
+<h2>All Journal Entries</h2>
+<div class="row">
+    {% for entry in entries %}
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Mood: {{ entry.mood }}</h5>
+                <p class="card-text"><strong>Gratitude:</strong> {{ entry.gratitude }}</p>
+                <p class="card-text"><strong>Room for Growth:</strong> {{ entry.room_for_growth }}</p>
+                <p class="card-text"><strong>Thoughts:</strong> {{ entry.thoughts }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+body {
+    font-family: Arial, sans-serif;
+}
+h1, h2 {
+    color: #2c3e50;
+}
+.btn {
+    border-radius: 25px;
+}
