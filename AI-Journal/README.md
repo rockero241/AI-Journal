@@ -18,3 +18,7 @@ Welcome to **AI Journal**, an innovative and reflective journaling application. 
 ## TODO 
 
 - Implement SQL lite to store entries
+
+## Issues
+Website is not loading correctly - missing styling
+It's just loading a basic H1 element. That's it
